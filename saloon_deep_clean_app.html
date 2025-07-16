@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Saloon Deep Clean Checklist</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { text-align: center; }
+        .form-section { margin-bottom: 20px; }
+        label { display: block; margin-top: 10px; }
+        select, input[type="text"], input[type="date"], textarea { width: 100%; padding: 5px; margin-top: 5px; }
+        .checklist-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        .score-display { font-weight: bold; margin-top: 20px; }
+        button { padding: 10px 20px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="auditForm">
+        <h1>Saloon Deep Clean Checklist</h1>
+        <div class="form-section">
+            <label for="workOrder">Work Order Number:</label>
+            <input type="text" id="workOrder" name="workOrder">
+
+            <label for="unitNumber">Unit Number:</label>
+            <input type="text" id="unitNumber" name="unitNumber">
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date">
+        </div>
+
+        <div id="checklist">
+            <!-- Checklist items will be inserted here -->
+        </div>
+
+        <div class="score-display" id="totalScore">Total Score: 0</div>
+    </div>
+
+    <button onclick="generatePDF()">Download PDF</button>
+
+    <script>
+        const items = [
+            "Carpets", "Plastic/vinyl floor covering", "Seat covers", "Seats", "Wall panels",
+            "Ceiling panels", "Tables", "Walls", "Floors", "Internal saloon doors",
+            "Windows", "Luggage racks", "Luggage storage", "Litter bins", "General Interior"
+        ];
+
+        function createChecklist() {
+            const checklist = document.getElementById('checklist');
+            items.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'checklist-item';
+                div.innerHTML = `
+                    <label><strong>Item ${index + 1} - ${item}</strong></label>
+                    <label>Score:</label>
+                    <select onchange="updateScore()" class="score">
+                        <option value="0">0 - Work not done</option>
+                        <option value="1">1 - Needs improvement</option>
+                        <option value="2">2 - Satisfactory</option>
+                    </select>
+                    <label>Comments:</label>
+                    <textarea rows="3"></textarea>
+                    <label>Upload Photo:</label>
+                    <input type="file" accept="image/*">
+                `;
+                checklist.appendChild(div);
+            });
+        }
+
+        function updateScore() {
+            const scores = document.querySelectorAll('.score');
+            let total = 0;
+            scores.forEach(score => {
+                total += parseInt(score.value);
+            });
+            document.getElementById('totalScore').innerText = 'Total Score: ' + total;
+        }
+
+        function generatePDF() {
+            const element = document.getElementById('auditForm');
+            html2pdf().from(element).save('Saloon_Deep_Clean_Report.pdf');
+        }
+
+        createChecklist();
+    </script>
+</body>
+</html>
